@@ -1,0 +1,75 @@
+<UserControl x:Class="TileViewer.Views.SiteBrowserView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource MantleBrush}">
+    <DockPanel LastChildFill="True">
+        <!-- Source 1/2 pickers -->
+        <StackPanel DockPanel.Dock="Top" Margin="6,6,6,0">
+            <DockPanel LastChildFill="True" Margin="0,0,0,2">
+                <Button Content="1:" Width="28" Padding="0,2"
+                        Foreground="{StaticResource PeachBrush}" FontWeight="Bold"
+                        Click="PickSrc1_Click" DockPanel.Dock="Left" />
+                <TextBlock x:Name="Src1Label" Text="(not set)" Margin="6,0,0,0"
+                           VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                           Foreground="{StaticResource Overlay0Brush}" />
+            </DockPanel>
+            <DockPanel LastChildFill="True">
+                <Button Content="2:" Width="28" Padding="0,2"
+                        Foreground="{StaticResource SapphireBrush}" FontWeight="Bold"
+                        Click="PickSrc2_Click" DockPanel.Dock="Left" />
+                <TextBlock x:Name="Src2Label" Text="(not set)" Margin="6,0,0,0"
+                           VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                           Foreground="{StaticResource Overlay0Brush}" />
+            </DockPanel>
+        </StackPanel>
+
+        <!-- Scan + progress -->
+        <DockPanel DockPanel.Dock="Top" Margin="6,6,6,0" LastChildFill="True">
+            <Button Content="Scan" Padding="12,3" Click="Scan_Click" DockPanel.Dock="Left"
+                    Style="{StaticResource PrimaryButton}" />
+            <TextBlock x:Name="ProgressLabel" Text="" Margin="8,0"
+                       VerticalAlignment="Center" HorizontalAlignment="Right"
+                       Foreground="{StaticResource Overlay0Brush}" />
+        </DockPanel>
+
+        <!-- Filter row -->
+        <DockPanel DockPanel.Dock="Top" Margin="6" LastChildFill="True">
+            <ComboBox x:Name="StatusFilter" DockPanel.Dock="Right" Width="90"
+                      Margin="6,0,0,0"
+                      SelectionChanged="StatusFilter_SelectionChanged">
+                <ComboBoxItem Content="all" IsSelected="True" />
+                <ComboBoxItem Content="both" />
+                <ComboBoxItem Content="1-only" />
+                <ComboBoxItem Content="2-only" />
+                <ComboBoxItem Content="undecided" />
+            </ComboBox>
+            <TextBox x:Name="SearchBox" TextChanged="Search_TextChanged"
+                     VerticalContentAlignment="Center" />
+        </DockPanel>
+
+        <!-- Decision buttons -->
+        <UniformGrid DockPanel.Dock="Bottom" Columns="4" Margin="6,0,6,6">
+            <Button Content="Keep 1" Click="KeepOne_Click" Margin="2" />
+            <Button Content="Keep 2" Click="KeepTwo_Click" Margin="2" />
+            <Button Content="Skip" Click="Skip_Click" Margin="2" />
+            <Button Content="Clear" Click="ClearDec_Click" Margin="2" />
+        </UniformGrid>
+
+        <!-- Sites -->
+        <ListView x:Name="SitesList" Margin="6,0,6,6"
+                  Background="{StaticResource BaseBrush}"
+                  BorderBrush="{StaticResource Surface0Brush}"
+                  SelectionChanged="SitesList_SelectionChanged">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Site" Width="170"
+                                    DisplayMemberBinding="{Binding DisplayName}" />
+                    <GridViewColumn Header="Src" Width="40"
+                                    DisplayMemberBinding="{Binding StatusText}" />
+                    <GridViewColumn Header="Decision" Width="70"
+                                    DisplayMemberBinding="{Binding DecisionText}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </DockPanel>
+</UserControl>

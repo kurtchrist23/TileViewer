@@ -1,0 +1,15 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+
+# Python (legacy)
+__pycache__/
+*.pyc
+build/
+dist/
+*.spec
+
+# Publish output lives one level up
+../publish/

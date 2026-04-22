@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>TileViewer</AssemblyName>
+    <RootNamespace>TileViewer</RootNamespace>
+    <Version>2.0.0</Version>
+    <ApplicationIcon>tileviewer.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="tileviewer.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\CommonStuff\Converters.cs" Link="Helpers\Converters.cs" />
+    <Page Include="..\..\CommonStuff\Theme.xaml" Link="Resources\Theme.xaml" />
+  </ItemGroup>
+</Project>

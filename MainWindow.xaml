@@ -16,9 +16,6 @@
                 BorderBrush="{StaticResource Surface0Brush}" BorderThickness="0,0,0,1"
                 Padding="6,4">
             <DockPanel LastChildFill="True">
-                <Button Content="Scan" Padding="12,3" Margin="2,0"
-                        Click="Scan_Click" DockPanel.Dock="Left"
-                        Style="{StaticResource PrimaryButton}" />
                 <Button Content="+ Panel" Padding="12,3" Margin="2,0"
                         Click="AddPanel_Click" DockPanel.Dock="Left" />
                 <CheckBox x:Name="SyncCheck" Content="Sync Panels" IsChecked="True"

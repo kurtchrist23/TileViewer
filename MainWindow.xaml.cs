@@ -48,8 +48,6 @@ public partial class MainWindow : Window
         }
     }
 
-    private void Scan_Click(object sender, RoutedEventArgs e) => Browser.Scan();
-
     private void AddPanel_Click(object sender, RoutedEventArgs e) => AddPanel();
 
     public MapPanelView AddPanel()
@@ -110,7 +108,7 @@ public partial class MainWindow : Window
             if (p == source || p.Tileset == null) continue;
             p.Lat = source.Lat;
             p.Lon = source.Lon;
-            p.Zoom = source.Zoom;
+            p.Zoom = Math.Max(p.Tileset.MinZoom, Math.Min(p.Tileset.MaxZoom, source.Zoom));
             p.ScheduleRender();
         }
     }

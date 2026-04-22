@@ -20,12 +20,12 @@ public partial class MapPanelView : UserControl
     public string DriveLabelText { get; private set; } = "";
 
     private Point? _dragStart;
-    private bool _renderPending;
     private bool _comboSync;
 
     public MapPanelView()
     {
         InitializeComponent();
+        MapSurface.RenderTiles = DrawTiles;
     }
 
     public void RefreshCombo()
@@ -66,8 +66,8 @@ public partial class MapPanelView : UserControl
         {
             var (lat, lon) = ts.Center();
             Lat = lat; Lon = lon;
-            var w = TileCanvas.ActualWidth > 0 ? TileCanvas.ActualWidth : 600;
-            var h = TileCanvas.ActualHeight > 0 ? TileCanvas.ActualHeight : 400;
+            var w = MapSurface.ActualWidth > 0 ? MapSurface.ActualWidth : 600;
+            var h = MapSurface.ActualHeight > 0 ? MapSurface.ActualHeight : 400;
             Zoom = ts.FitZoom(w, h);
         }
         ScheduleRender();
@@ -150,21 +150,24 @@ public partial class MapPanelView : UserControl
 
     private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
-        _dragStart = e.GetPosition(TileCanvas);
-        TileCanvas.CaptureMouse();
+        _dragStart = e.GetPosition(MapSurface);
+        MapSurface.CaptureMouse();
         Focus();
     }
 
-    private void Canvas_MouseLeftButtonUp(object sender, MouseEventArgs e)
+    private void Canvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) => EndDrag();
+    private void Canvas_MouseLeave(object sender, MouseEventArgs e) => EndDrag();
+
+    private void EndDrag()
     {
         _dragStart = null;
-        TileCanvas.ReleaseMouseCapture();
+        MapSurface.ReleaseMouseCapture();
     }
 
     private void Canvas_MouseMove(object sender, MouseEventArgs e)
     {
         if (_dragStart == null || Tileset == null) return;
-        var p = e.GetPosition(TileCanvas);
+        var p = e.GetPosition(MapSurface);
         var dx = p.X - _dragStart.Value.X;
         var dy = p.Y - _dragStart.Value.Y;
         _dragStart = p;
@@ -185,7 +188,10 @@ public partial class MapPanelView : UserControl
 
     public void ZDelta(int d)
     {
-        var nz = Math.Max(0, Math.Min(22, Zoom + d));
+        var ts = Tileset;
+        var minZ = ts?.MinZoom ?? 0;
+        var maxZ = ts?.MaxZoom ?? 22;
+        var nz = Math.Max(minZ, Math.Min(maxZ, Zoom + d));
         if (nz != Zoom)
         {
             Zoom = nz;
@@ -198,19 +204,6 @@ public partial class MapPanelView : UserControl
 
     public void ScheduleRender()
     {
-        if (_renderPending) return;
-        _renderPending = true;
-        Dispatcher.BeginInvoke(new Action(Render), DispatcherPriority.Background);
-    }
-
-    private void Render()
-    {
-        _renderPending = false;
-        var w = TileCanvas.ActualWidth;
-        var h = TileCanvas.ActualHeight;
-        TileCanvas.Children.Clear();
-        if (w < 2 || h < 2) return;
-
         var ts = Tileset;
         if (ts == null)
         {
@@ -218,9 +211,26 @@ public partial class MapPanelView : UserControl
             ZoomOverlay.Text = "";
             NameOverlay.Text = "";
             CoordOverlay.Text = "";
-            return;
         }
-        EmptyText.Visibility = Visibility.Collapsed;
+        else
+        {
+            EmptyText.Visibility = Visibility.Collapsed;
+            ZoomOverlay.Text = $"z{Zoom}";
+            NameOverlay.Text = ts.Name;
+            CoordOverlay.Text = $"{Lat:F4}, {Lon:F4}";
+        }
+        MapSurface.InvalidateVisual();
+    }
+
+    private void DrawTiles(DrawingContext dc, Size size)
+    {
+        var w = size.Width;
+        var h = size.Height;
+        if (w < 2 || h < 2) return;
+        var ts = Tileset;
+        if (ts == null) return;
+        var cache = Host?.Cache;
+        if (cache == null) return;
 
         var z = Zoom;
         var cx = ts.LonToTx(Lon, z);
@@ -236,8 +246,6 @@ public partial class MapPanelView : UserControl
         var ty0 = (int)Math.Floor(cy - hh);
         var ty1 = (int)Math.Ceiling(cy + hh);
 
-        var cache = Host?.Cache;
-
         for (int tx = tx0; tx <= tx1; tx++)
         {
             for (int ty = ty0; ty <= ty1; ty++)
@@ -247,24 +255,10 @@ public partial class MapPanelView : UserControl
                 if (atx < 0) atx += nx;
                 var sx = (int)(w / 2 + (tx - cx) * DT);
                 var sy = (int)(h / 2 - (ty - cy) * DT - DT);
-                BitmapSource? img = cache?.Get(ts, z, atx, ty);
-                if (img == null) continue;
-                var imgElem = new Image
-                {
-                    Source = img,
-                    Width = DT,
-                    Height = DT,
-                    SnapsToDevicePixels = true,
-                };
-                RenderOptions.SetBitmapScalingMode(imgElem, BitmapScalingMode.NearestNeighbor);
-                Canvas.SetLeft(imgElem, sx);
-                Canvas.SetTop(imgElem, sy);
-                TileCanvas.Children.Add(imgElem);
+                var img = cache.Get(ts, z, atx, ty);
+                if (img != null)
+                    dc.DrawImage(img, new Rect(sx, sy, DT, DT));
             }
         }
-
-        ZoomOverlay.Text = $"z{z}";
-        NameOverlay.Text = ts.Name;
-        CoordOverlay.Text = $"{Lat:F4}, {Lon:F4}";
     }
 }

@@ -30,22 +30,26 @@ public partial class SiteBrowserView : UserControl
         _ready = true;
     }
 
+    private static string ShortName(string path)
+    {
+        var n = Path.GetFileName(path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+        return string.IsNullOrEmpty(n) ? path : n;
+    }
+
     private void LoadSourcesFromDisk()
     {
         _store.LoadSources();
         if (!string.IsNullOrEmpty(_store.Src1))
         {
             Src1 = _store.Src1;
-            Src1DisplayLabel = Path.GetFileName(Src1.TrimEnd(Path.DirectorySeparatorChar)) ?? Src1;
-            Src1Label.Text = Src1DisplayLabel;
-            Src1Label.Foreground = (System.Windows.Media.Brush)FindResource("PeachBrush");
+            Src1DisplayLabel = ShortName(Src1);
+            Src1Label.Text = Src1;
         }
         if (!string.IsNullOrEmpty(_store.Src2))
         {
             Src2 = _store.Src2;
-            Src2DisplayLabel = Path.GetFileName(Src2.TrimEnd(Path.DirectorySeparatorChar)) ?? Src2;
-            Src2Label.Text = Src2DisplayLabel;
-            Src2Label.Foreground = (System.Windows.Media.Brush)FindResource("SapphireBrush");
+            Src2DisplayLabel = ShortName(Src2);
+            Src2Label.Text = Src2;
         }
     }
 
@@ -54,9 +58,8 @@ public partial class SiteBrowserView : UserControl
         var dlg = new OpenFolderDialog { Title = "Select Source 1 folder" };
         if (dlg.ShowDialog() != true) return;
         Src1 = dlg.FolderName;
-        Src1DisplayLabel = Path.GetFileName(Src1.TrimEnd(Path.DirectorySeparatorChar)) ?? Src1;
-        Src1Label.Text = Src1DisplayLabel;
-        Src1Label.Foreground = (System.Windows.Media.Brush)FindResource("PeachBrush");
+        Src1DisplayLabel = ShortName(Src1);
+        Src1Label.Text = Src1;
         _store.Src1 = Src1;
         _store.SaveSources();
     }
@@ -66,9 +69,8 @@ public partial class SiteBrowserView : UserControl
         var dlg = new OpenFolderDialog { Title = "Select Source 2 folder" };
         if (dlg.ShowDialog() != true) return;
         Src2 = dlg.FolderName;
-        Src2DisplayLabel = Path.GetFileName(Src2.TrimEnd(Path.DirectorySeparatorChar)) ?? Src2;
-        Src2Label.Text = Src2DisplayLabel;
-        Src2Label.Foreground = (System.Windows.Media.Brush)FindResource("SapphireBrush");
+        Src2DisplayLabel = ShortName(Src2);
+        Src2Label.Text = Src2;
         _store.Src2 = Src2;
         _store.SaveSources();
     }

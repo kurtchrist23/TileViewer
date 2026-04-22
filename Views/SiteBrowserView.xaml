@@ -11,7 +11,8 @@
                         Click="PickSrc1_Click" DockPanel.Dock="Left" />
                 <TextBlock x:Name="Src1Label" Text="(not set)" Margin="6,0,0,0"
                            VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
-                           Foreground="{StaticResource Overlay0Brush}" />
+                           Foreground="{StaticResource TextBrush}"
+                           ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
             </DockPanel>
             <DockPanel LastChildFill="True">
                 <Button Content="2:" Width="28" Padding="0,2"
@@ -19,7 +20,8 @@
                         Click="PickSrc2_Click" DockPanel.Dock="Left" />
                 <TextBlock x:Name="Src2Label" Text="(not set)" Margin="6,0,0,0"
                            VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
-                           Foreground="{StaticResource Overlay0Brush}" />
+                           Foreground="{StaticResource TextBrush}"
+                           ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
             </DockPanel>
         </StackPanel>
 

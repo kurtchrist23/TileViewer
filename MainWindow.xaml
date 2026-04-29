@@ -21,6 +21,14 @@
                 <CheckBox x:Name="SyncCheck" Content="Sync Panels" IsChecked="True"
                           Margin="12,0,0,0" VerticalAlignment="Center" DockPanel.Dock="Left"
                           Foreground="{StaticResource TextBrush}" />
+                <TextBlock Text="About"
+                           DockPanel.Dock="Right"
+                           FontSize="11" Cursor="Hand"
+                           VerticalAlignment="Center"
+                           Margin="12,0,4,0"
+                           Foreground="{StaticResource Overlay0Brush}"
+                           MouseLeftButtonUp="AboutClick"
+                           ToolTip="About this application" />
                 <TextBlock x:Name="StatusText" Text="0 tilesets"
                            Foreground="{StaticResource Overlay0Brush}"
                            VerticalAlignment="Center" HorizontalAlignment="Right"

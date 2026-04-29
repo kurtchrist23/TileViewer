@@ -144,6 +144,11 @@ public partial class MainWindow : Window
         }
     }
 
+    private void AboutClick(object sender, MouseButtonEventArgs e)
+    {
+        new Views.AboutWindow { Owner = this }.ShowDialog();
+    }
+
     private void ToggleBrowser()
     {
         if (SidebarCol.Width.Value > 0)

@@ -1,0 +1,10 @@
+<Project>
+
+  <!--
+    Self-contained build extensions. Imports the local Signing.targets so
+    publishing a Release exe gets signed. No dependency on any file
+    outside this project folder.
+  -->
+  <Import Project="$(MSBuildThisFileDirectory)Signing.targets" />
+
+</Project>

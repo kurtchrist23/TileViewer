@@ -1,0 +1,25 @@
+<Project>
+
+  <!--
+    Self-contained build defaults for this project.
+    No dependency on any file outside this project folder.
+    Companion Directory.Build.targets in this same folder pulls in the
+    signing target.
+  -->
+
+  <PropertyGroup>
+    <DebugType>embedded</DebugType>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>false</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+  </PropertyGroup>
+
+  <!--
+    Publish output goes to <ProjectFolder>\publish\, the folder one level
+    above this Code\ folder.
+  -->
+  <PropertyGroup>
+    <PublishDir>$(MSBuildThisFileDirectory)..\publish\</PublishDir>
+  </PropertyGroup>
+
+</Project>

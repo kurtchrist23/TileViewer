@@ -1,0 +1,34 @@
+<Project>
+
+  <!--
+    Shared code-signing target for the SIL dev suite.
+
+    Signs the published exe with the code-signing cert in LocalMachine\My
+    (thumbprint below). Runs only on Release publishes for exe output types.
+
+    Opt out per-build:   dotnet publish -c Release -p:SkipCodeSign=true
+    Override thumbprint: dotnet publish -c Release -p:CodeSignThumbprint=<sha1>
+    Override timestamp:  dotnet publish -c Release -p:CodeSignTimestampUrl=<url>
+
+    Requires:
+      - signtool.exe on PATH (Windows SDK / VS install)
+      - Admin shell (private key lives in LocalMachine\My)
+      - Intermediate + Root in LocalMachine\CA and LocalMachine\Root
+  -->
+
+  <PropertyGroup>
+    <CodeSignThumbprint Condition="'$(CodeSignThumbprint)' == ''">1B46846533CB304106A33DBB387D959E557F61F4</CodeSignThumbprint>
+    <CodeSignTimestampUrl Condition="'$(CodeSignTimestampUrl)' == ''">http://timestamp.digicert.com</CodeSignTimestampUrl>
+  </PropertyGroup>
+
+  <Target Name="SignPublishedExe"
+          AfterTargets="Publish"
+          Condition="'$(OS)' == 'Windows_NT' and '$(Configuration)' == 'Release' and '$(SkipCodeSign)' != 'true' and ('$(OutputType)' == 'WinExe' or '$(OutputType)' == 'Exe')">
+    <PropertyGroup>
+      <_SignedExePath>$(PublishDir)$(AssemblyName).exe</_SignedExePath>
+    </PropertyGroup>
+    <Message Text="Signing $(_SignedExePath) with thumbprint $(CodeSignThumbprint)" Importance="high" />
+    <Exec Command="signtool sign /sm /fd SHA256 /tr $(CodeSignTimestampUrl) /td SHA256 /sha1 $(CodeSignThumbprint) /d &quot;$(AssemblyName)&quot; &quot;$(_SignedExePath)&quot;" />
+  </Target>
+
+</Project>
